@@ -30,6 +30,17 @@ describe('Yadda', function() {
         });
     });
 
+    it('should handle an error in an asynchronous scenario', function(done) {
+        var library = new Library().define('foo', function(next) {
+            throw new Error('no next');
+            //next(new Error('no next')); // <--- this is ok though
+        });
+        new Yadda(library).yadda('foo', function(err) {
+            assert.equal(err ? err.message : '', 'no next');
+            done();
+        });
+    });
+
     it('should interpret a mix of asynchronous and synchronous scenarios', function(done) {
         var executions = 0;
         var library = new Library().define('foo', function(next) {
